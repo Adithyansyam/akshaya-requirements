@@ -1,0 +1,29 @@
+{
+    "project_info": {
+        "project_number": "345553930810",
+        "project_id": "akshayahub-f7a31",
+        "storage_bucket": "akshayahub-f7a31.firebasestorage.app"
+    },
+    "client": [
+        {
+            "client_info": {
+                "mobilesdk_app_id": "1:345553930810:android:ed22d2f25fb20bdedfc303",
+                "android_client_info": {
+                    "package_name": "com.example.akshaya_hub"
+                }
+            },
+            "oauth_client": [],
+            "api_key": [
+                {
+                    "current_key": "AIzaSyCMoDHQK1FC6rIfAGM_DiQM_0A_tforybQ"
+                }
+            ],
+            "services": {
+                "appinvite_service": {
+                    "other_platform_oauth_client": []
+                }
+            }
+        }
+    ],
+    "configuration_version": "1"
+}
