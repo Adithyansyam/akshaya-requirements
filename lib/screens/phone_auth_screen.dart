@@ -1,0 +1,294 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+class PhoneAuthScreen extends StatefulWidget {
+  const PhoneAuthScreen({super.key});
+
+  @override
+  State<PhoneAuthScreen> createState() => _PhoneAuthScreenState();
+}
+
+class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _phoneController = TextEditingController();
+  final _otpController = TextEditingController();
+  
+  bool _isLoading = false;
+  bool _codeSent = false;
+  String? _verificationId;
+  int? _resendToken;
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendOTP() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      String phoneNumber = _phoneController.text.trim();
+      
+      // Add country code if not present
+      if (!phoneNumber.startsWith('+')) {
+        phoneNumber = '+91$phoneNumber'; // Default to India (+91)
+      }
+
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // Auto-verification (Android only)
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Phone number automatically verified!')),
+            );
+          }
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          if (mounted) {
+            String message = 'Verification failed. Please try again.';
+            if (e.code == 'invalid-phone-number') {
+              message = 'The phone number is invalid.';
+            } else if (e.code == 'too-many-requests') {
+              message = 'Too many requests. Please try again later.';
+            }
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+          }
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            _codeSent = true;
+            _verificationId = verificationId;
+            _resendToken = resendToken;
+            _isLoading = false;
+          });
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('OTP sent successfully!')),
+            );
+          }
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          _verificationId = verificationId;
+        },
+        timeout: const Duration(seconds: 60),
+        forceResendingToken: _resendToken,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _verifyOTP() async {
+    if (_otpController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter the OTP')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId!,
+        smsCode: _otpController.text.trim(),
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login successful!')),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        String message = 'Invalid OTP. Please try again.';
+        if (e.code == 'invalid-verification-code') {
+          message = 'Invalid OTP code.';
+        } else if (e.code == 'session-expired') {
+          message = 'OTP expired. Please request a new one.';
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _resendOTP() {
+    setState(() {
+      _codeSent = false;
+      _otpController.clear();
+    });
+    _sendOTP();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Phone Login'),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 40),
+              Icon(
+                Icons.phone_android,
+                size: 80,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                _codeSent ? 'Enter OTP' : 'Enter Phone Number',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _codeSent
+                    ? 'We sent a code to ${_phoneController.text}'
+                    : 'We will send you a one-time password',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 40),
+              if (!_codeSent) ...[
+                TextFormField(
+                  controller: _phoneController,
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    hintText: '10-digit mobile number',
+                    prefixIcon: const Icon(Icons.phone),
+                    prefixText: '+91 ',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  maxLength: 10,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    if (value.length != 10) {
+                      return 'Please enter a valid 10-digit number';
+                    }
+                    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                      return 'Please enter only numbers';
+                    }
+                    return null;
+                  },
+                ),
+              ] else ...[
+                TextFormField(
+                  controller: _otpController,
+                  decoration: InputDecoration(
+                    labelText: 'OTP',
+                    hintText: '6-digit code',
+                    prefixIcon: const Icon(Icons.lock),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    letterSpacing: 8,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Didn't receive the code? "),
+                    TextButton(
+                      onPressed: _isLoading ? null : _resendOTP,
+                      child: const Text('Resend'),
+                    ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 24),
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: _codeSent ? _verifyOTP : _sendOTP,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        _codeSent ? 'Verify OTP' : 'Send OTP',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+              if (_codeSent) ...[
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _codeSent = false;
+                      _otpController.clear();
+                    });
+                  },
+                  child: const Text('Change Phone Number'),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
