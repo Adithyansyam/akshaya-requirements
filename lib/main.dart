@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'screens/auth_screen.dart';
+import 'firebase_options.dart';
+import 'screens/phone_auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -46,7 +49,7 @@ class MyApp extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          return snapshot.hasData ? const HomePage() : const AuthScreen();
+          return snapshot.hasData ? const HomePage() : const PhoneAuthScreen();
         },
       ),
     );
@@ -90,7 +93,7 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              'Welcome, ${user?.email ?? 'User'}!',
+              'Welcome, ${user?.phoneNumber ?? user?.email ?? 'User'}!',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
