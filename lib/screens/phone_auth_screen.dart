@@ -1,5 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 
 class PhoneAuthScreen extends StatefulWidget {
   const PhoneAuthScreen({super.key});
@@ -15,7 +15,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   
   bool _isLoading = false;
   bool _codeSent = false;
-  String? _verificationId;
 
   @override
   void dispose() {
@@ -45,7 +44,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       if (mounted) {
         setState(() {
           _codeSent = true;
-          _verificationId = 'test-verification-id';
           _isLoading = false;
         });
         
@@ -118,10 +116,14 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   }
 
   Future<void> _verifyOTP() async {
-    if (_otpController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter the OTP')),
-      );
+    final otp = _otpController.text.trim();
+    
+    if (otp.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter the OTP')),
+        );
+      }
       return;
     }
 
@@ -130,28 +132,35 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
     });
 
     try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId!,
-        smsCode: _otpController.text.trim(),
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login successful!')),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      if (mounted) {
-        String message = 'Invalid OTP. Please try again.';
-        if (e.code == 'invalid-verification-code') {
-          message = 'Invalid OTP code.';
-        } else if (e.code == 'session-expired') {
-          message = 'OTP expired. Please request a new one.';
+      // For testing with hardcoded OTP '1234'
+      if (otp == '1234') {
+        // Clear the OTP field
+        _otpController.clear();
+        
+        if (mounted) {
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Login successful!')),
+          );
+          
+          // Navigate to home screen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ),
+          );
         }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Invalid OTP. Please enter 1234 for testing.')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
+          SnackBar(content: Text('Error: ${e.toString()}')),
         );
       }
     } finally {
