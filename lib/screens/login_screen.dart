@@ -48,11 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
           _isLoading = false;
         });
         
-        // Auto-fill the OTP field with 6-digit test OTP
-        _otpController.text = '123456';
-        
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Test OTP is 123456')),
+          const SnackBar(content: Text('OTP sent to your mobile number')),
         );
       }
     } catch (e) {
