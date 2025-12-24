@@ -47,11 +47,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
           _isLoading = false;
         });
         
-        // Auto-fill the OP field with test OTP
-        _otpController.text = '1234';
+        // Auto-fill the OTP field with 6-digit test OTP
+        _otpController.text = '123456';
         
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Test OTP is 1234')),
+          const SnackBar(content: Text('Test OTP is 123456')),
         );
       }
       
@@ -118,10 +118,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   Future<void> _verifyOTP() async {
     final otp = _otpController.text.trim();
     
-    if (otp.isEmpty) {
+    if (otp.isEmpty || otp.length != 6) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter the OTP')),
+          const SnackBar(content: Text('Please enter a valid 6-digit OTP')),
         );
       }
       return;
@@ -132,8 +132,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
     });
 
     try {
-      // For testing with hardcoded OTP '1234'
-      if (otp == '1234') {
+      // For testing with hardcoded 6-digit OTP '123456'
+      if (otp == '123456') {
         // Clear the OTP field
         _otpController.clear();
         
@@ -153,7 +153,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid OTP. Please enter 1234 for testing.')),
+            const SnackBar(content: Text('Invalid OTP. Please enter 123456 for testing.')),
           );
         }
       }
