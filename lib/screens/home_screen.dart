@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'phone_auth_screen.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -21,7 +21,7 @@ class HomeScreen extends StatelessWidget {
               if (context.mounted) {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => const PhoneAuthScreen(),
+                    builder: (context) => const LoginScreen(),
                   ),
                 );
               }
