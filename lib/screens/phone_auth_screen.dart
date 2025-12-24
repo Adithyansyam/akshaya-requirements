@@ -16,7 +16,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   bool _isLoading = false;
   bool _codeSent = false;
   String? _verificationId;
-  int? _resendToken;
 
   @override
   void dispose() {
@@ -42,14 +41,31 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
         phoneNumber = '+91$phoneNumber'; // Default to India (+91)
       }
 
+      // For testing purposes, directly set the OTP screen without Firebase verification
+      if (mounted) {
+        setState(() {
+          _codeSent = true;
+          _verificationId = 'test-verification-id';
+          _isLoading = false;
+        });
+        
+        // Auto-fill the OP field with test OTP
+        _otpController.text = '1234';
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Test OTP is 1234')),
+        );
+      }
+      
+      // Uncomment this block if you want to enable actual Firebase verification later
+      /*
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) async {
-          // Auto-verification (Android only)
           await FirebaseAuth.instance.signInWithCredential(credential);
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Phone number automatically verified!')),
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
             );
           }
         },
@@ -85,6 +101,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
         timeout: const Duration(seconds: 60),
         forceResendingToken: _resendToken,
       );
+      */
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
