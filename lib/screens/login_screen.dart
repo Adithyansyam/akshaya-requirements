@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'signup_screen.dart';
 
-class PhoneAuthScreen extends StatefulWidget {
-  const PhoneAuthScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<PhoneAuthScreen> createState() => _PhoneAuthScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
   final _otpController = TextEditingController();
@@ -55,52 +55,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
           const SnackBar(content: Text('Test OTP is 123456')),
         );
       }
-      
-      // Uncomment this block if you want to enable actual Firebase verification later
-      /*
-      await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          await FirebaseAuth.instance.signInWithCredential(credential);
-          if (mounted) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          }
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          if (mounted) {
-            String message = 'Verification failed. Please try again.';
-            if (e.code == 'invalid-phone-number') {
-              message = 'The phone number is invalid.';
-            } else if (e.code == 'too-many-requests') {
-              message = 'Too many requests. Please try again later.';
-            }
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
-            );
-          }
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          setState(() {
-            _codeSent = true;
-            _verificationId = verificationId;
-            _resendToken = resendToken;
-            _isLoading = false;
-          });
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('OTP sent successfully!')),
-            );
-          }
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          _verificationId = verificationId;
-        },
-        timeout: const Duration(seconds: 60),
-        forceResendingToken: _resendToken,
-      );
-      */
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -185,7 +139,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Phone Login'),
+        title: const Text('Login'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
