@@ -24,12 +24,18 @@ class UserService {
 
       // Save additional user data to Firestore
       if (userCredential.user != null) {
-        await saveUserData(
-          uid: userCredential.user!.uid,
-          name: name,
-          email: email,
-          phoneNumber: phoneNumber,
-        );
+        try {
+          await saveUserData(
+            uid: userCredential.user!.uid,
+            name: name,
+            email: email,
+            phoneNumber: phoneNumber,
+          );
+        } catch (e) {
+          // If Firestore save fails, delete the user from Auth to maintain consistency
+          await userCredential.user!.delete();
+          rethrow;
+        }
       }
 
       return userCredential;
@@ -56,6 +62,8 @@ class UserService {
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+    } on FirebaseException catch (e) {
+      throw Exception('Failed to save user data: ${e.message}');
     } catch (e) {
       throw Exception('Failed to save user data: $e');
     }
