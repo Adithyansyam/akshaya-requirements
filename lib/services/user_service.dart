@@ -8,6 +8,42 @@ class UserService {
   // Get current user
   User? get currentUser => _auth.currentUser;
 
+  // Sign in with email and password
+  Future<UserCredential> signInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      // Sign in with Firebase Auth
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Verify user exists in Firestore
+      if (userCredential.user != null) {
+        final userDoc = await _firestore
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if (!userDoc.exists) {
+          await _auth.signOut(); // Sign out since user doesn't exist in Firestore
+          throw FirebaseAuthException(
+            code: 'user-not-found',
+            message: 'No user found with this email',
+          );
+        }
+      }
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw Exception('Failed to sign in: $e');
+    }
+  }
+
   // Create user with email and password
   Future<UserCredential> signUpWithEmail({
     required String email,

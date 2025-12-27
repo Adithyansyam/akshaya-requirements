@@ -1,4 +1,7 @@
+// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:akshaya_hub/services/user_service.dart';
 import 'home_screen.dart';
 import 'signup_screen.dart';
 
@@ -6,130 +9,76 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
-  final _otpController = TextEditingController();
-  
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _userService = UserService();
   bool _isLoading = false;
-  bool _codeSent = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _phoneController.dispose();
-    _otpController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _sendOTP() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      String phoneNumber = _phoneController.text.trim();
+      await _userService.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!mounted) return;
       
-      // Add country code if not present
-      if (!phoneNumber.startsWith('+')) {
-        phoneNumber = '+91$phoneNumber'; // Default to India (+91)
-      }
-
-      // For testing purposes, directly set the OTP screen without Firebase verification
-      if (mounted) {
-        setState(() {
-          _codeSent = true;
-          _isLoading = false;
-        });
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('OTP sent to your mobile number')),
-        );
-      }
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        (route) => false,
+      );
+    } on FirebaseAuthException catch (e) {
+      _showError(_getErrorMessage(e.code));
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
-      }
+      _showError('An error occurred. Please try again.');
     } finally {
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     }
   }
 
-  Future<void> _verifyOTP() async {
-    final otp = _otpController.text.trim();
-    
-    if (otp.isEmpty || otp.length != 6) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter a valid 6-digit OTP')),
-        );
-      }
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // For testing with hardcoded 6-digit OTP '123456'
-      if (otp == '123456') {
-        // Clear the OTP field
-        _otpController.clear();
-        
-        if (mounted) {
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Login successful!')),
-          );
-          
-          // Navigate to home screen
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
-            ),
-          );
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid OTP. Please enter 123456 for testing.')),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+  String _getErrorMessage(String code) {
+    switch (code) {
+      case 'user-not-found':
+        return 'No user found with this email.';
+      case 'wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'invalid-email':
+        return 'The email address is not valid.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      default:
+        return 'Login failed. Please try again.';
     }
   }
 
-  void _resendOTP() {
-    setState(() {
-      _codeSent = false;
-      _otpController.clear();
-    });
-    _sendOTP();
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -146,137 +95,92 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 40),
-              Icon(
-                Icons.phone_android,
-                size: 80,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                _codeSent ? 'Enter OTP' : 'Enter Phone Number',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _codeSent
-                    ? 'We sent a code to ${_phoneController.text}'
-                    : 'We will send you a one-time password',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              if (!_codeSent) ...[
-                TextFormField(
-                  controller: _phoneController,
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    hintText: '10-digit mobile number',
-                    prefixIcon: const Icon(Icons.phone),
-                    prefixText: '+91 ',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  keyboardType: TextInputType.phone,
-                  maxLength: 10,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your phone number';
-                    }
-                    if (value.length != 10) {
-                      return 'Please enter a valid 10-digit number';
-                    }
-                    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-                      return 'Please enter only numbers';
-                    }
-                    return null;
-                  },
-                ),
-              ] else ...[
-                TextFormField(
-                  controller: _otpController,
-                  decoration: InputDecoration(
-                    labelText: 'OTP',
-                    hintText: '6-digit code',
-                    prefixIcon: const Icon(Icons.lock),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  maxLength: 6,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    letterSpacing: 8,
-                    fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  prefixIcon: const Icon(Icons.email),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Didn't receive the code? "),
-                    TextButton(
-                      onPressed: _isLoading ? null : _resendOTP,
-                      child: const Text('Resend'),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  if (!value.contains('@')) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword 
+                          ? Icons.visibility 
+                          : Icons.visibility_off,
                     ),
-                  ],
-                ),
-              ],
-              const SizedBox(height: 24),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: _codeSent ? _verifyOTP : _sendOTP,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        _codeSent ? 'Verify OTP' : 'Send OTP',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-              if (_codeSent) ...[
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _codeSent = false;
-                      _otpController.clear();
-                    });
-                  },
-                  child: const Text('Change Phone Number'),
-                ),
-              ],
-              if (!_codeSent) ...[
-                const SizedBox(height: 16),
-                Center(
-                  child: TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                      );
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
                     },
-                    child: const Text('Create an account'),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-              ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Text('Login'),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SignUpScreen(),
+                    ),
+                  );
+                },
+                child: const Text('Don\'t have an account? Sign Up'),
+              ),
             ],
           ),
         ),
