@@ -1,2 +1,37 @@
 build/
 .dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+**/*.apk
+**/*.aab
+
+# iOS
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/build/
+**/*.xcuserdatad
+**/*.xcuserdata
+**/DerivedData/
+
+# macOS
+macos/Pods/
+macos/Runner.xcworkspace/
+macos/build/
+macos/Flutter/ephemeral/
+
+# Windows
+windows/Flutter/ephemeral/
+windows/build/
+
+# Linux
+linux/flutter/ephemeral/
+linux/build/
+
+# Logs
+*.log
