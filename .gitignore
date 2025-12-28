@@ -35,3 +35,11 @@ linux/build/
 
 # Logs
 *.log
+
+# Visual Studio
+.vs/
+*.vsidx
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
