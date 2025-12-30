@@ -113,6 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
         centerTitle: true,
         backgroundColor: color5,
         elevation: 0,
+        automaticallyImplyLeading: false,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
