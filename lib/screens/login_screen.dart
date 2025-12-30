@@ -108,6 +108,7 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
         centerTitle: true,
         backgroundColor: color4,
         elevation: 0,
+        automaticallyImplyLeading: false,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
