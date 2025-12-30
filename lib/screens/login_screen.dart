@@ -12,12 +12,13 @@ class LoginScreen extends StatefulWidget {
   LoginScreenState createState() => LoginScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
-  // White and Dark Blue Color Scheme
-  static const Color darkBlue = Color(0xFF1E3A8A);
-  static const Color lightBlue = Color(0xFF3B82F6);
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color offWhite = Color(0xFFF8FAFC);
+class LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+  // 3D Form Color Scheme
+  static const Color color1 = Color(0xFFD8DAF7);
+  static const Color color2 = Color(0xFFC2C5F3);
+  static const Color color3 = Color(0xFF989DEB);
+  static const Color color4 = Color(0xFF6D74E3);
+  static const Color buttonColor = Color(0xFF575CB5);
   
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -25,6 +26,11 @@ class LoginScreenState extends State<LoginScreen> {
   final _userService = UserService();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  
+  // Hover states for 3D effect
+  bool _emailHover = false;
+  bool _passwordHover = false;
+  bool _buttonHover = false;
 
   @override
   void dispose() {
@@ -90,164 +96,333 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: offWhite,
+      backgroundColor: const Color(0xFFE8E8E8),
       appBar: AppBar(
         title: const Text(
           'Login',
           style: TextStyle(
-            color: white,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        backgroundColor: darkBlue,
+        backgroundColor: color4,
         elevation: 0,
-        iconTheme: const IconThemeData(color: white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: darkBlue),
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: TextStyle(color: darkBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.email, color: darkBlue),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: darkBlue),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: darkBlue.withOpacity(0.3)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: darkBlue, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: white,
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: _obscurePassword,
-                style: const TextStyle(color: darkBlue),
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  labelStyle: TextStyle(color: darkBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.lock, color: darkBlue),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword 
-                          ? Icons.visibility 
-                          : Icons.visibility_off,
-                      color: darkBlue,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: darkBlue),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: darkBlue.withOpacity(0.3)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: darkBlue, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: white,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _login,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: darkBlue,
-                  foregroundColor: white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 2,
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(white),
-                        ),
-                      )
-                    : const Text(
-                        'Login',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignUpScreen(),
-                    ),
-                  );
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: darkBlue,
-                ),
-                child: RichText(
-                  text: const TextSpan(
-                    text: 'Don\'t have an account? ',
-                    style: TextStyle(color: darkBlue),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 40),
+                // 3D Skewed Form Container
+                Transform(
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateX(-0.25),
+                  alignment: Alignment.center,
+                  child: Column(
                     children: [
-                      TextSpan(
-                        text: 'Sign Up',
-                        style: TextStyle(
-                          color: lightBlue,
-                          fontWeight: FontWeight.bold,
+                      // Email Field with 3D effect
+                      _build3DInputField(
+                        controller: _emailController,
+                        hintText: 'E-mail',
+                        backgroundColor: color3,
+                        sideColor: color3,
+                        topColor: color3,
+                        icon: Icons.email,
+                        keyboardType: TextInputType.emailAddress,
+                        isHovered: _emailHover,
+                        onHoverChange: (hover) => setState(() => _emailHover = hover),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 0),
+                      
+                      // Password Field with 3D effect
+                      _build3DInputField(
+                        controller: _passwordController,
+                        hintText: 'Password',
+                        backgroundColor: color2,
+                        sideColor: color2,
+                        topColor: color2,
+                        icon: Icons.lock,
+                        obscureText: _obscurePassword,
+                        isHovered: _passwordHover,
+                        onHoverChange: (hover) => setState(() => _passwordHover = hover),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black54,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 0),
+                      
+                      // Submit Button with 3D effect
+                      _build3DButton(
+                        onPressed: _isLoading ? null : _login,
+                        text: _isLoading ? 'Loading...' : 'Submit',
+                        backgroundColor: color4,
+                        sideColor: color4,
+                        topColor: color4,
+                        isHovered: _buttonHover,
+                        onHoverChange: (hover) => setState(() => _buttonHover = hover),
+                        isLoading: _isLoading,
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 60),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignUpScreen(),
+                      ),
+                    );
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Don\'t have an account? ',
+                      style: TextStyle(color: Colors.grey[700]),
+                      children: const [
+                        TextSpan(
+                          text: 'Sign Up',
+                          style: TextStyle(
+                            color: color4,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _build3DInputField({
+    required TextEditingController controller,
+    required String hintText,
+    required Color backgroundColor,
+    required Color sideColor,
+    required Color topColor,
+    required IconData icon,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+    Widget? suffixIcon,
+    String? Function(String?)? validator,
+    required bool isHovered,
+    required Function(bool) onHoverChange,
+  }) {
+    return MouseRegion(
+      onEnter: (_) => onHoverChange(true),
+      onExit: (_) => onHoverChange(false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        transform: Matrix4.identity()
+          ..translate(isHovered ? -20.0 : 0.0, 0.0, 0.0),
+        child: Stack(
+          children: [
+            // Left side panel (3D effect)
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Transform(
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(0.785),
+                alignment: Alignment.centerRight,
+                child: Container(
+                  width: 40,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: sideColor.withOpacity(0.8),
+                    border: Border.all(color: sideColor, width: 0.5),
+                  ),
+                ),
+              ),
+            ),
+            
+            // Top panel (3D effect)
+            Positioned(
+              left: 40,
+              top: -40,
+              child: Transform(
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateX(0.785),
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: 250,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: topColor.withOpacity(0.8),
+                    border: Border.all(color: topColor, width: 0.5),
+                  ),
+                ),
+              ),
+            ),
+            
+            // Main input field
+            Container(
+              margin: const EdgeInsets.only(left: 40),
+              width: 250,
+              height: 50,
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                border: Border.all(color: sideColor, width: 0.5),
+              ),
+              child: TextFormField(
+                controller: controller,
+                obscureText: obscureText,
+                keyboardType: keyboardType,
+                style: const TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  hintText: hintText,
+                  hintStyle: const TextStyle(color: Colors.black54),
+                  prefixIcon: Icon(icon, color: Colors.black54),
+                  suffixIcon: suffixIcon,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                ),
+                validator: validator,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _build3DButton({
+    required VoidCallback? onPressed,
+    required String text,
+    required Color backgroundColor,
+    required Color sideColor,
+    required Color topColor,
+    required bool isHovered,
+    required Function(bool) onHoverChange,
+    required bool isLoading,
+  }) {
+    return MouseRegion(
+      onEnter: (_) => onHoverChange(true),
+      onExit: (_) => onHoverChange(false),
+      child: GestureDetector(
+        onTap: onPressed,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          transform: Matrix4.identity()
+            ..translate(isHovered ? -20.0 : 0.0, 0.0, 0.0),
+          child: Stack(
+            children: [
+              // Left side panel (3D effect)
+              Positioned(
+                left: 0,
+                top: 0,
+                child: Transform(
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(0.785),
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: 40,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: isHovered ? buttonColor.withOpacity(0.8) : sideColor.withOpacity(0.8),
+                      border: Border.all(
+                        color: isHovered ? buttonColor : sideColor,
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              
+              // Top panel (3D effect)
+              Positioned(
+                left: 40,
+                top: -40,
+                child: Transform(
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateX(0.785),
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: 250,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isHovered ? buttonColor.withOpacity(0.8) : topColor.withOpacity(0.8),
+                      border: Border.all(
+                        color: isHovered ? buttonColor : topColor,
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              
+              // Main button
+              Container(
+                margin: const EdgeInsets.only(left: 40),
+                width: 250,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: isHovered ? buttonColor : backgroundColor,
+                  border: Border.all(
+                    color: isHovered ? buttonColor : sideColor,
+                    width: 0.5,
+                  ),
+                ),
+                child: Center(
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(
+                          text,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ],
