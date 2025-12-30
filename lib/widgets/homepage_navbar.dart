@@ -15,9 +15,9 @@ class HomePageNavBar extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
-      backgroundColor: const Color(0xFF001F3F), // Navy blue background
-      selectedItemColor: const Color(0xFFFFD700), // Gold selected item
-      unselectedItemColor: Colors.white70, // White unselected items
+      backgroundColor: const Color(0xFF001F3F),
+      selectedItemColor: const Color(0xFFFFD700),
+      unselectedItemColor: Colors.white70,
       type: BottomNavigationBarType.fixed,
       items: const [
         BottomNavigationBarItem(

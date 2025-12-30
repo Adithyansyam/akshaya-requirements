@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHomeContent() {
     return Container(
-      color: const Color(0xFF001F3F), // Navy blue background
+      color: const Color(0xFF001F3F),
       child: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Icon(
               Icons.check_circle_outline,
               size: 80,
-              color: Color(0xFFFFD700), // Gold icon
+              color: Color(0xFFFFD700),
             ),
             SizedBox(height: 20),
             Text(
@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFFFD700), // Gold text
+                color: Color(0xFFFFD700),
               ),
             ),
             SizedBox(height: 10),
@@ -55,79 +55,51 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildProfileContent() {
     return Container(
       color: const Color(0xFF001F3F),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CircleAvatar(
-                radius: 60,
-                backgroundColor: Color(0xFFFFD700),
-                child: Icon(
-                  Icons.person,
-                  size: 60,
-                  color: Color(0xFF001F3F),
-                ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+            const CircleAvatar(
+              radius: 50,
+              backgroundColor: Color(0xFFFFD700),
+              child: Icon(
+                Icons.person,
+                size: 50,
+                color: Color(0xFF001F3F),
               ),
-              const SizedBox(height: 20),
-              Text(
-                user?.displayName ?? 'User Name',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFFFD700),
-                ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              user?.displayName ?? 'User Name',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFFFD700),
               ),
-              const SizedBox(height: 10),
-              Text(
-                user?.email ?? 'user@example.com',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              user?.email ?? 'user@example.com',
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
               ),
-              const SizedBox(height: 30),
-              ElevatedButton.icon(
-                onPressed: () {
-                  // Add edit profile functionality
-                },
-                icon: const Icon(Icons.edit, color: Color(0xFF001F3F)),
-                label: const Text(
-                  'Edit Profile',
-                  style: TextStyle(color: Color(0xFF001F3F)),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD700),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: () {
+                // Add edit profile functionality
+              },
+              icon: const Icon(Icons.edit, color: Color(0xFF001F3F)),
+              label: const Text('Edit Profile'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFD700),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
-              const SizedBox(height: 20),
-              ListTile(
-                leading: const Icon(Icons.settings, color: Color(0xFFFFD700)),
-                title: const Text(
-                  'Settings',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  // Navigate to settings
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.help, color: Color(0xFFFFD700)),
-                title: const Text(
-                  'Help & Support',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  // Navigate to help
-                },
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
