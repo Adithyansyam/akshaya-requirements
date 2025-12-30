@@ -13,6 +13,12 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  // Navy Blue and Gold Color Scheme
+  static const Color navyBlue = Color(0xFF001F3F);
+  static const Color gold = Color(0xFFFFD700);
+  static const Color lightNavy = Color(0xFF003366);
+  static const Color darkGold = Color(0xFFDAA520);
+  
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -84,9 +90,19 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text(
+          'Login',
+          style: TextStyle(
+            color: gold,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
+        backgroundColor: navyBlue,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: gold),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -99,12 +115,25 @@ class LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                style: const TextStyle(color: navyBlue),
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email),
+                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
+                  prefixIcon: const Icon(Icons.email, color: gold),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: navyBlue),
                   ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: gold, width: 2),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -120,14 +149,17 @@ class LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
+                style: const TextStyle(color: navyBlue),
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  prefixIcon: const Icon(Icons.lock),
+                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
+                  prefixIcon: const Icon(Icons.lock, color: gold),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword 
                           ? Icons.visibility 
                           : Icons.visibility_off,
+                      color: gold,
                     ),
                     onPressed: () {
                       setState(() {
@@ -137,7 +169,18 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: navyBlue),
                   ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: gold, width: 2),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -153,10 +196,13 @@ class LoginScreenState extends State<LoginScreen> {
               ElevatedButton(
                 onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: gold,
+                  foregroundColor: navyBlue,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 3,
                 ),
                 child: _isLoading
                     ? const SizedBox(
@@ -164,10 +210,16 @@ class LoginScreenState extends State<LoginScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(navyBlue),
                         ),
                       )
-                    : const Text('Login'),
+                    : const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
               const SizedBox(height: 16),
               TextButton(
@@ -179,7 +231,24 @@ class LoginScreenState extends State<LoginScreen> {
                     ),
                   );
                 },
-                child: const Text('Don\'t have an account? Sign Up'),
+                style: TextButton.styleFrom(
+                  foregroundColor: navyBlue,
+                ),
+                child: RichText(
+                  text: const TextSpan(
+                    text: 'Don\'t have an account? ',
+                    style: TextStyle(color: navyBlue),
+                    children: [
+                      TextSpan(
+                        text: 'Sign Up',
+                        style: TextStyle(
+                          color: gold,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
