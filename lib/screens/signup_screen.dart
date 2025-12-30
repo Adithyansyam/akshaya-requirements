@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:akshaya_hub/services/user_service.dart';
 import 'home_screen.dart';
+import 'login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -275,7 +276,10 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                 const SizedBox(height: 60),
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    );
                   },
                   child: RichText(
                     text: TextSpan(
