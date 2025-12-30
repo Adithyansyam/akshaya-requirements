@@ -9,12 +9,14 @@ class SignUpScreen extends StatefulWidget {
   State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
-  // Navy Blue and Gold Color Scheme
-  static const Color navyBlue = Color(0xFF001F3F);
-  static const Color gold = Color(0xFFFFD700);
-  static const Color lightNavy = Color(0xFF003366);
-  static const Color darkGold = Color(0xFFDAA520);
+class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderStateMixin {
+  // 3D Form Color Scheme (5 levels for signup)
+  static const Color color1 = Color(0xFFD8DAF7);
+  static const Color color2 = Color(0xFFC2C5F3);
+  static const Color color3 = Color(0xFFADB1EF);
+  static const Color color4 = Color(0xFF989DEB);
+  static const Color color5 = Color(0xFF6D74E3);
+  static const Color buttonColor = Color(0xFF575CB5);
   
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -27,6 +29,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  
+  // Hover states for 3D effect
+  bool _nameHover = false;
+  bool _emailHover = false;
+  bool _phoneHover = false;
+  bool _passwordHover = false;
+  bool _confirmPasswordHover = false;
+  bool _buttonHover = false;
 
   @override
   void dispose() {
@@ -90,260 +100,398 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFE8E8E8),
       appBar: AppBar(
         title: const Text(
           'Create Account',
           style: TextStyle(
-            color: gold,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        backgroundColor: navyBlue,
+        backgroundColor: color5,
         elevation: 0,
-        iconTheme: const IconThemeData(color: gold),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _nameController,
-                style: const TextStyle(color: navyBlue),
-                decoration: InputDecoration(
-                  labelText: 'Full Name',
-                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.person, color: gold),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: navyBlue),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: gold, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your full name';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: navyBlue),
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.email, color: gold),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: navyBlue),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: gold, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                style: const TextStyle(color: navyBlue),
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.phone, color: gold),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: navyBlue),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: gold, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your phone number';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: _obscurePassword,
-                style: const TextStyle(color: navyBlue),
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.lock, color: gold),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                      color: gold,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: navyBlue),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: gold, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
-                  }
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _confirmPasswordController,
-                obscureText: _obscureConfirmPassword,
-                style: const TextStyle(color: navyBlue),
-                decoration: InputDecoration(
-                  labelText: 'Confirm Password',
-                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.lock_outline, color: gold),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
-                      color: gold,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirmPassword = !_obscureConfirmPassword;
-                      });
-                    },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: navyBlue),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: gold, width: 2),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please confirm your password';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _signUp,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: gold,
-                  foregroundColor: navyBlue,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 3,
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(navyBlue),
-                        ),
-                      )
-                    : const Text(
-                        'Sign Up',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: navyBlue,
-                ),
-                child: RichText(
-                  text: const TextSpan(
-                    text: 'Already have an account? ',
-                    style: TextStyle(color: navyBlue),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 40),
+                // 3D Skewed Form Container
+                Transform(
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateX(-0.25),
+                  alignment: Alignment.center,
+                  child: Column(
                     children: [
-                      TextSpan(
-                        text: 'Sign In',
-                        style: TextStyle(
-                          color: gold,
-                          fontWeight: FontWeight.bold,
+                      // Name Field with 3D effect
+                      _build3DInputField(
+                        controller: _nameController,
+                        hintText: 'Full Name',
+                        backgroundColor: color4,
+                        sideColor: color4,
+                        topColor: color4,
+                        icon: Icons.person,
+                        isHovered: _nameHover,
+                        onHoverChange: (hover) => setState(() => _nameHover = hover),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter your full name';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 0),
+                      
+                      // Email Field with 3D effect
+                      _build3DInputField(
+                        controller: _emailController,
+                        hintText: 'E-mail',
+                        backgroundColor: color3,
+                        sideColor: color3,
+                        topColor: color3,
+                        icon: Icons.email,
+                        keyboardType: TextInputType.emailAddress,
+                        isHovered: _emailHover,
+                        onHoverChange: (hover) => setState(() => _emailHover = hover),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 0),
+                      
+                      // Phone Field with 3D effect
+                      _build3DInputField(
+                        controller: _phoneController,
+                        hintText: 'Phone Number',
+                        backgroundColor: color2,
+                        sideColor: color2,
+                        topColor: color2,
+                        icon: Icons.phone,
+                        keyboardType: TextInputType.phone,
+                        isHovered: _phoneHover,
+                        onHoverChange: (hover) => setState(() => _phoneHover = hover),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter your phone number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 0),
+                      
+                      // Password Field with 3D effect
+                      _build3DInputField(
+                        controller: _passwordController,
+                        hintText: 'Password',
+                        backgroundColor: color1,
+                        sideColor: color1,
+                        topColor: color1,
+                        icon: Icons.lock,
+                        obscureText: _obscurePassword,
+                        isHovered: _passwordHover,
+                        onHoverChange: (hover) => setState(() => _passwordHover = hover),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black54,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a password';
+                          }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 0),
+                      
+                      // Confirm Password Field with 3D effect
+                      _build3DInputField(
+                        controller: _confirmPasswordController,
+                        hintText: 'Confirm Password',
+                        backgroundColor: color1,
+                        sideColor: color1,
+                        topColor: color1,
+                        icon: Icons.lock_outline,
+                        obscureText: _obscureConfirmPassword,
+                        isHovered: _confirmPasswordHover,
+                        onHoverChange: (hover) => setState(() => _confirmPasswordHover = hover),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black54,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                            });
+                          },
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 0),
+                      
+                      // Submit Button with 3D effect
+                      _build3DButton(
+                        onPressed: _isLoading ? null : _signUp,
+                        text: _isLoading ? 'Creating Account...' : 'Sign Up',
+                        backgroundColor: color5,
+                        sideColor: color5,
+                        topColor: color5,
+                        isHovered: _buttonHover,
+                        onHoverChange: (hover) => setState(() => _buttonHover = hover),
+                        isLoading: _isLoading,
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 60),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      text: 'Already have an account? ',
+                      style: TextStyle(color: Colors.grey[700]),
+                      children: const [
+                        TextSpan(
+                          text: 'Sign In',
+                          style: TextStyle(
+                            color: color5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _build3DInputField({
+    required TextEditingController controller,
+    required String hintText,
+    required Color backgroundColor,
+    required Color sideColor,
+    required Color topColor,
+    required IconData icon,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+    Widget? suffixIcon,
+    String? Function(String?)? validator,
+    required bool isHovered,
+    required Function(bool) onHoverChange,
+  }) {
+    return MouseRegion(
+      onEnter: (_) => onHoverChange(true),
+      onExit: (_) => onHoverChange(false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        transform: Matrix4.identity()
+          ..translate(isHovered ? -20.0 : 0.0, 0.0, 0.0),
+        child: Stack(
+          children: [
+            // Left side panel (3D effect)
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Transform(
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(0.785),
+                alignment: Alignment.centerRight,
+                child: Container(
+                  width: 40,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: sideColor.withOpacity(0.8),
+                    border: Border.all(color: sideColor, width: 0.5),
+                  ),
+                ),
+              ),
+            ),
+            
+            // Top panel (3D effect)
+            Positioned(
+              left: 40,
+              top: -40,
+              child: Transform(
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateX(0.785),
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: 250,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: topColor.withOpacity(0.8),
+                    border: Border.all(color: topColor, width: 0.5),
+                  ),
+                ),
+              ),
+            ),
+            
+            // Main input field
+            Container(
+              margin: const EdgeInsets.only(left: 40),
+              width: 250,
+              height: 50,
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                border: Border.all(color: sideColor, width: 0.5),
+              ),
+              child: TextFormField(
+                controller: controller,
+                obscureText: obscureText,
+                keyboardType: keyboardType,
+                style: const TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  hintText: hintText,
+                  hintStyle: const TextStyle(color: Colors.black54),
+                  prefixIcon: Icon(icon, color: Colors.black54),
+                  suffixIcon: suffixIcon,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                ),
+                validator: validator,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _build3DButton({
+    required VoidCallback? onPressed,
+    required String text,
+    required Color backgroundColor,
+    required Color sideColor,
+    required Color topColor,
+    required bool isHovered,
+    required Function(bool) onHoverChange,
+    required bool isLoading,
+  }) {
+    return MouseRegion(
+      onEnter: (_) => onHoverChange(true),
+      onExit: (_) => onHoverChange(false),
+      child: GestureDetector(
+        onTap: onPressed,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          transform: Matrix4.identity()
+            ..translate(isHovered ? -20.0 : 0.0, 0.0, 0.0),
+          child: Stack(
+            children: [
+              // Left side panel (3D effect)
+              Positioned(
+                left: 0,
+                top: 0,
+                child: Transform(
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(0.785),
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: 40,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: isHovered ? buttonColor.withOpacity(0.8) : sideColor.withOpacity(0.8),
+                      border: Border.all(
+                        color: isHovered ? buttonColor : sideColor,
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              
+              // Top panel (3D effect)
+              Positioned(
+                left: 40,
+                top: -40,
+                child: Transform(
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateX(0.785),
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: 250,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: isHovered ? buttonColor.withOpacity(0.8) : topColor.withOpacity(0.8),
+                      border: Border.all(
+                        color: isHovered ? buttonColor : topColor,
+                        width: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              
+              // Main button
+              Container(
+                margin: const EdgeInsets.only(left: 40),
+                width: 250,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: isHovered ? buttonColor : backgroundColor,
+                  border: Border.all(
+                    color: isHovered ? buttonColor : sideColor,
+                    width: 0.5,
+                  ),
+                ),
+                child: Center(
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(
+                          text,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
             ],
