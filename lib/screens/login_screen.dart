@@ -13,11 +13,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  // Navy Blue and Gold Color Scheme
-  static const Color navyBlue = Color(0xFF001F3F);
-  static const Color gold = Color(0xFFFFD700);
-  static const Color lightNavy = Color(0xFF003366);
-  static const Color darkGold = Color(0xFFDAA520);
+  // White and Dark Blue Color Scheme
+  static const Color darkBlue = Color(0xFF1E3A8A);
+  static const Color lightBlue = Color(0xFF3B82F6);
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color offWhite = Color(0xFFF8FAFC);
   
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -90,19 +90,19 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: offWhite,
       appBar: AppBar(
         title: const Text(
           'Login',
           style: TextStyle(
-            color: gold,
+            color: white,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        backgroundColor: navyBlue,
+        backgroundColor: darkBlue,
         elevation: 0,
-        iconTheme: const IconThemeData(color: gold),
+        iconTheme: const IconThemeData(color: white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -115,25 +115,25 @@ class LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: navyBlue),
+                style: const TextStyle(color: darkBlue),
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.email, color: gold),
+                  labelStyle: TextStyle(color: darkBlue.withOpacity(0.7)),
+                  prefixIcon: const Icon(Icons.email, color: darkBlue),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: navyBlue),
+                    borderSide: const BorderSide(color: darkBlue),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
+                    borderSide: BorderSide(color: darkBlue.withOpacity(0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: gold, width: 2),
+                    borderSide: const BorderSide(color: darkBlue, width: 2),
                   ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: white,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -149,17 +149,17 @@ class LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
-                style: const TextStyle(color: navyBlue),
+                style: const TextStyle(color: darkBlue),
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  labelStyle: TextStyle(color: navyBlue.withOpacity(0.7)),
-                  prefixIcon: const Icon(Icons.lock, color: gold),
+                  labelStyle: TextStyle(color: darkBlue.withOpacity(0.7)),
+                  prefixIcon: const Icon(Icons.lock, color: darkBlue),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword 
                           ? Icons.visibility 
                           : Icons.visibility_off,
-                      color: gold,
+                      color: darkBlue,
                     ),
                     onPressed: () {
                       setState(() {
@@ -169,18 +169,18 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: navyBlue),
+                    borderSide: const BorderSide(color: darkBlue),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: navyBlue.withOpacity(0.5)),
+                    borderSide: BorderSide(color: darkBlue.withOpacity(0.3)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: gold, width: 2),
+                    borderSide: const BorderSide(color: darkBlue, width: 2),
                   ),
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: white,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -196,13 +196,13 @@ class LoginScreenState extends State<LoginScreen> {
               ElevatedButton(
                 onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: gold,
-                  foregroundColor: navyBlue,
+                  backgroundColor: darkBlue,
+                  foregroundColor: white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 3,
+                  elevation: 2,
                 ),
                 child: _isLoading
                     ? const SizedBox(
@@ -210,7 +210,7 @@ class LoginScreenState extends State<LoginScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(navyBlue),
+                          valueColor: AlwaysStoppedAnimation<Color>(white),
                         ),
                       )
                     : const Text(
@@ -232,17 +232,17 @@ class LoginScreenState extends State<LoginScreen> {
                   );
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: navyBlue,
+                  foregroundColor: darkBlue,
                 ),
                 child: RichText(
                   text: const TextSpan(
                     text: 'Don\'t have an account? ',
-                    style: TextStyle(color: navyBlue),
+                    style: TextStyle(color: darkBlue),
                     children: [
                       TextSpan(
                         text: 'Sign Up',
                         style: TextStyle(
-                          color: gold,
+                          color: lightBlue,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
