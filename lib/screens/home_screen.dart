@@ -23,29 +23,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHomeContent() {
     return Container(
-      color: const Color(0xFF001F3F),
-      child: const Center(
+      color: Colors.white,
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.check_circle_outline,
               size: 80,
-              color: Color(0xFFFFD700),
+              color: const Color(0xFF9C27B0),
             ),
-            SizedBox(height: 20),
-            Text(
+            const SizedBox(height: 20),
+            const Text(
               'Home',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFFFD700),
+                color: Color(0xFF9C27B0),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               'Welcome to the Home screen!',
-              style: TextStyle(fontSize: 16, color: Colors.white70),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
           ],
         ),
@@ -70,10 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     
     return Container(
-      color: const Color(0xFF001F3F),
+      color: Colors.white,
       child: const Center(
         child: CircularProgressIndicator(
-          color: Color(0xFFFFD700),
+          color: Color(0xFF9C27B0),
         ),
       ),
     );
@@ -83,16 +83,22 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF001F3F),
+        backgroundColor: Colors.white,
+        elevation: 0,
         title: Text(
           _currentIndex == 0 ? 'Home' : 'Profile',
-          style: const TextStyle(color: Color(0xFFFFD700)),
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Color(0xFFFFD700)),
+        iconTheme: const IconThemeData(color: Color(0xFF9C27B0)),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
+            color: const Color(0xFF9C27B0),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
               if (context.mounted) {
