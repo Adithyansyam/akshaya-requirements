@@ -124,54 +124,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   
-                  const SizedBox(height: 8),
+
                   
-                  // Username/Email with purple color
-                  Text(
-                    '@${userData?['username'] ?? user?.email?.split('@')[0] ?? 'janedoe'} • UI Enthusiast',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF9C27B0),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+
                   
-                  const SizedBox(height: 12),
-                  
-                  // Bio
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Text(
-                      userData?['bio'] ?? 'Building digital experiences one pixel\nat a time',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Stats Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildStatItem(
-                        userData?['followers']?.toString() ?? '1.2k',
-                        'FOLLOWERS',
-                      ),
-                      _buildStatItem(
-                        userData?['following']?.toString() ?? '845',
-                        'FOLLOWING',
-                      ),
-                      _buildStatItem(
-                        userData?['posts']?.toString() ?? '42',
-                        'POSTS',
-                      ),
-                    ],
-                  ),
+
                   
                   const SizedBox(height: 32),
                   
