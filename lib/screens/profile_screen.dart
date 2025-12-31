@@ -117,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   
                   // User Name
                   Text(
-                    userData?['displayName'] ?? user?.displayName ?? 'Jane Doe',
+                    userData?['name'] ?? user?.displayName ?? 'User',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
