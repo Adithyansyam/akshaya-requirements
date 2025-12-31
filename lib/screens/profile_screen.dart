@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login_screen.dart';
+import '../widgets/homepage_navbar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -250,6 +251,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
+      bottomNavigationBar: HomePageNavBar(
+        currentIndex: 1, // Profile is at index 1
+        onTap: (index) {
+          if (index == 0) {
+            // Navigate back to home
+            Navigator.pop(context);
+          }
+          // If index is 1 (Profile), we're already here
+        },
+      ),
     );
   }
 
