@@ -13,7 +13,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _emailController = TextEditingController();
   
   final user = FirebaseAuth.instance.currentUser;
   bool isLoading = true;
@@ -38,12 +37,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           setState(() {
             _nameController.text = data?['name'] ?? '';
             _phoneController.text = data?['phoneNumber'] ?? '';
-            _emailController.text = data?['email'] ?? user?.email ?? '';
             isLoading = false;
           });
         } else {
           setState(() {
-            _emailController.text = user?.email ?? '';
             isLoading = false;
           });
         }
@@ -108,7 +105,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
-    _emailController.dispose();
     super.dispose();
   }
 
@@ -239,60 +235,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       },
                     ),
                     
-                    const SizedBox(height: 24),
-                    
-                    // Email Field
-                    const Text(
-                      'Email Address',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _emailController,
-                      enabled: false, // Make email read-only
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(
-                        hintText: 'Email cannot be changed',
-                        filled: true,
-                        fillColor: Colors.grey[200],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFB07DFA),
-                            width: 2,
-                          ),
-                        ),
-                        prefixIcon: const Icon(
-                          Icons.email_outlined,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your email';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email';
-                        }
-                        return null;
-                      },
-                    ),
                     
                     const SizedBox(height: 40),
                     
