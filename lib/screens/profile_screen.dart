@@ -98,10 +98,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: CircleAvatar(
                         radius: 60,
                         backgroundColor: Colors.grey[200],
-                        backgroundImage: userData?['photoURL'] != null
-                            ? NetworkImage(userData!['photoURL'])
+                        backgroundImage: userData?['avatarUrl'] != null
+                            ? NetworkImage(userData!['avatarUrl'])
                             : null,
-                        child: userData?['photoURL'] == null
+                        child: userData?['avatarUrl'] == null
                             ? Icon(
                                 Icons.person,
                                 size: 60,

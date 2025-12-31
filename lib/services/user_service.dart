@@ -90,11 +90,15 @@ class UserService {
     required String phoneNumber,
   }) async {
     try {
+      // Generate avatar URL using DiceBear API with email as seed
+      final avatarUrl = 'https://api.dicebear.com/7.x/avataaars/png?seed=${Uri.encodeComponent(email)}';
+      
       await _firestore.collection('users').doc(uid).set({
         'uid': uid,
         'name': name,
         'email': email,
         'phoneNumber': phoneNumber,
+        'avatarUrl': avatarUrl,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
