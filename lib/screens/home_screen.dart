@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import 'profile_screen.dart';
 import '../widgets/homepage_navbar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -53,53 +54,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildProfileContent() {
+    // Navigate to dedicated ProfileScreen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_currentIndex == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        ).then((_) {
+          // Reset to home tab when returning from profile
+          setState(() {
+            _currentIndex = 0;
+          });
+        });
+      }
+    });
+    
     return Container(
       color: const Color(0xFF001F3F),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            const CircleAvatar(
-              radius: 50,
-              backgroundColor: Color(0xFFFFD700),
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: Color(0xFF001F3F),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              user?.displayName ?? 'User Name',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFFFD700),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              user?.email ?? 'user@example.com',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.white70,
-              ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Add edit profile functionality
-              },
-              icon: const Icon(Icons.edit, color: Color(0xFF001F3F)),
-              label: const Text('Edit Profile'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFD700),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
-            ),
-          ],
+      child: const Center(
+        child: CircularProgressIndicator(
+          color: Color(0xFFFFD700),
         ),
       ),
     );
