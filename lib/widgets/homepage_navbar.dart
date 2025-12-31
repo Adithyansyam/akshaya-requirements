@@ -37,15 +37,15 @@ class _HomePageNavBarState extends State<HomePageNavBar>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(left: 16, right: 16, top: 6, bottom: 25),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -58,8 +58,8 @@ class _HomePageNavBarState extends State<HomePageNavBar>
               color: const Color(0xFF9C27B0),
             ),
             child: Container(
-              height: 70,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -93,35 +93,19 @@ class _HomePageNavBarState extends State<HomePageNavBar>
     return GestureDetector(
       onTap: () => widget.onTap(index),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF9C27B0).withOpacity(0.1)
+              ? const Color(0xFF9C27B0).withOpacity(0.15)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected
-                  ? const Color(0xFF9C27B0)
-                  : Colors.grey[400],
-              size: 24,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected
-                    ? const Color(0xFF9C27B0)
-                    : Colors.grey[400],
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-          ],
+        child: Icon(
+          icon,
+          color: isSelected
+              ? const Color(0xFF9C27B0)
+              : Colors.grey[400],
+          size: 22,
         ),
       ),
     );
