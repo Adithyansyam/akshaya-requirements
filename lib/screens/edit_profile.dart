@@ -74,7 +74,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           .update({
         'name': _nameController.text.trim(),
         'phoneNumber': _phoneController.text.trim(),
-        'email': _emailController.text.trim(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
@@ -254,16 +253,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _emailController,
+                      enabled: false, // Make email read-only
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                        hintText: 'Enter your email',
+                        hintText: 'Email cannot be changed',
                         filled: true,
-                        fillColor: Colors.grey[100],
+                        fillColor: Colors.grey[200],
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
                         enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
@@ -276,7 +280,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         prefixIcon: const Icon(
                           Icons.email_outlined,
-                          color: Color(0xFFB07DFA),
+                          color: Colors.grey,
                         ),
                       ),
                       validator: (value) {
