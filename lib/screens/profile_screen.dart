@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login_screen.dart';
 import '../widgets/homepage_navbar.dart';
+import 'edit_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -158,9 +159,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     iconColor: const Color(0xFF9C27B0),
                     title: 'Edit Profile',
                     onTap: () {
-                      // TODO: Navigate to edit profile screen
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Edit Profile - Coming Soon')),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfileScreen(),
+                        ),
                       );
                     },
                   ),
