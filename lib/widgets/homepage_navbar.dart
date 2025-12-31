@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
-class HomePageNavBar extends StatelessWidget {
+class HomePageNavBar extends StatefulWidget {
   final int currentIndex;
   final Function(int) onTap;
 
@@ -11,25 +12,169 @@ class HomePageNavBar extends StatelessWidget {
   });
 
   @override
+  State<HomePageNavBar> createState() => _HomePageNavBarState();
+}
+
+class _HomePageNavBarState extends State<HomePageNavBar>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: onTap,
-      backgroundColor: Colors.white,
-      selectedItemColor: const Color(0xFF9C27B0),
-      unselectedItemColor: Colors.grey[400],
-      type: BottomNavigationBarType.fixed,
-      elevation: 8,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-      ],
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: AnimatedBorderPainter(
+              animation: _animationController,
+              color: const Color(0xFF9C27B0),
+            ),
+            child: Container(
+              height: 70,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(
+                    icon: Icons.home,
+                    label: 'Home',
+                    index: 0,
+                    isSelected: widget.currentIndex == 0,
+                  ),
+                  _buildNavItem(
+                    icon: Icons.person,
+                    label: 'Profile',
+                    index: 1,
+                    isSelected: widget.currentIndex == 1,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
+  }
+
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+    required bool isSelected,
+  }) {
+    return GestureDetector(
+      onTap: () => widget.onTap(index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFF9C27B0).withOpacity(0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected
+                  ? const Color(0xFF9C27B0)
+                  : Colors.grey[400],
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected
+                    ? const Color(0xFF9C27B0)
+                    : Colors.grey[400],
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class AnimatedBorderPainter extends CustomPainter {
+  final Animation<double> animation;
+  final Color color;
+
+  AnimatedBorderPainter({
+    required this.animation,
+    required this.color,
+  }) : super(repaint: animation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(30));
+
+    // Draw white background
+    final bgPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    canvas.drawRRect(rrect, bgPaint);
+
+    // Create gradient that rotates
+    final progress = animation.value;
+    final gradientRotation = progress * 2 * math.pi;
+
+    final gradient = SweepGradient(
+      colors: [
+        color,
+        color.withOpacity(0.5),
+        Colors.white,
+        Colors.white,
+        color.withOpacity(0.5),
+        color,
+      ],
+      stops: const [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
+      transform: GradientRotation(gradientRotation),
+    );
+
+    final paint = Paint()
+      ..shader = gradient.createShader(rect)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+
+    canvas.drawRRect(rrect, paint);
+  }
+
+  @override
+  bool shouldRepaint(AnimatedBorderPainter oldDelegate) {
+    return oldDelegate.animation != animation;
   }
 }
