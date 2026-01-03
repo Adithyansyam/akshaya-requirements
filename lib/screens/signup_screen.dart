@@ -149,20 +149,6 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE8E8E8),
-      appBar: AppBar(
-        title: const Text(
-          'Create Account',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: color5,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -171,7 +157,92 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 40),
+                const SizedBox(height: 60),
+                // Modern Create Account Header with Animation
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, child) {
+                    return Transform.translate(
+                      offset: Offset(0, 50 * (1 - value.clamp(0.0, 1.0))),
+                      child: Opacity(
+                        opacity: value.clamp(0.0, 1.0),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      // Create Account text without background
+                      Stack(
+                        children: [
+                          // Stroke/outline effect
+                          Text(
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
+                              height: 1.2,
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = 2.5
+                                ..color = color5.withOpacity(0.5),
+                            ),
+                          ),
+                          // Main text with gradient-like shadow
+                          Text(
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              color: color5,
+                              letterSpacing: 1.5,
+                              height: 1.2,
+                              shadows: [
+                                Shadow(
+                                  color: color4.withOpacity(0.8),
+                                  offset: const Offset(2, 2),
+                                  blurRadius: 4,
+                                ),
+                                Shadow(
+                                  color: color3.withOpacity(0.6),
+                                  offset: const Offset(4, 4),
+                                  blurRadius: 8,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      // Decorative line with gradient
+                      Container(
+                        width: 100,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(2),
+                          gradient: LinearGradient(
+                            colors: [
+                              color5,
+                              color4,
+                              color3,
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: color5.withOpacity(0.5),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 50),
                 // 3D Skewed Form Container
                 Transform(
                   transform: Matrix4.identity()
