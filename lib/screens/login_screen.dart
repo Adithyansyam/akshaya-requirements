@@ -286,7 +286,7 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
                       // Submit Button with 3D effect
                       _build3DButton(
                         onPressed: _isLoading ? null : _login,
-                        text: _isLoading ? 'Loading...' : 'Submit',
+                        text: _isLoading ? 'Loading...' : 'Login',
                         backgroundColor: color4,
                         sideColor: color4,
                         topColor: color4,

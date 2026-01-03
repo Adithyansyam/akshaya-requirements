@@ -25,6 +25,11 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _nameFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
+  final _phoneFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  final _confirmPasswordFocusNode = FocusNode();
   
   final _userService = UserService();
   bool _isLoading = false;
@@ -38,6 +43,43 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
   bool _passwordHover = false;
   bool _confirmPasswordHover = false;
   bool _buttonHover = false;
+  
+  // Focus states for drawer animation
+  bool _nameFocused = false;
+  bool _emailFocused = false;
+  bool _phoneFocused = false;
+  bool _passwordFocused = false;
+  bool _confirmPasswordFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameFocusNode.addListener(() {
+      setState(() {
+        _nameFocused = _nameFocusNode.hasFocus;
+      });
+    });
+    _emailFocusNode.addListener(() {
+      setState(() {
+        _emailFocused = _emailFocusNode.hasFocus;
+      });
+    });
+    _phoneFocusNode.addListener(() {
+      setState(() {
+        _phoneFocused = _phoneFocusNode.hasFocus;
+      });
+    });
+    _passwordFocusNode.addListener(() {
+      setState(() {
+        _passwordFocused = _passwordFocusNode.hasFocus;
+      });
+    });
+    _confirmPasswordFocusNode.addListener(() {
+      setState(() {
+        _confirmPasswordFocused = _confirmPasswordFocusNode.hasFocus;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -46,6 +88,11 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _nameFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _phoneFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
     super.dispose();
   }
 
@@ -136,12 +183,14 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                       // Name Field with 3D effect
                       _build3DInputField(
                         controller: _nameController,
+                        focusNode: _nameFocusNode,
                         hintText: 'Full Name',
                         backgroundColor: color4,
                         sideColor: color4,
                         topColor: color4,
                         icon: Icons.person,
                         isHovered: _nameHover,
+                        isFocused: _nameFocused,
                         onHoverChange: (hover) => setState(() => _nameHover = hover),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -155,6 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                       // Email Field with 3D effect
                       _build3DInputField(
                         controller: _emailController,
+                        focusNode: _emailFocusNode,
                         hintText: 'E-mail',
                         backgroundColor: color3,
                         sideColor: color3,
@@ -162,6 +212,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                         icon: Icons.email,
                         keyboardType: TextInputType.emailAddress,
                         isHovered: _emailHover,
+                        isFocused: _emailFocused,
                         onHoverChange: (hover) => setState(() => _emailHover = hover),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -178,6 +229,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                       // Phone Field with 3D effect
                       _build3DInputField(
                         controller: _phoneController,
+                        focusNode: _phoneFocusNode,
                         hintText: 'Phone Number',
                         backgroundColor: color2,
                         sideColor: color2,
@@ -185,6 +237,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                         icon: Icons.phone,
                         keyboardType: TextInputType.phone,
                         isHovered: _phoneHover,
+                        isFocused: _phoneFocused,
                         onHoverChange: (hover) => setState(() => _phoneHover = hover),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -198,6 +251,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                       // Password Field with 3D effect
                       _build3DInputField(
                         controller: _passwordController,
+                        focusNode: _passwordFocusNode,
                         hintText: 'Password',
                         backgroundColor: color1,
                         sideColor: color1,
@@ -205,6 +259,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                         icon: Icons.lock,
                         obscureText: _obscurePassword,
                         isHovered: _passwordHover,
+                        isFocused: _passwordFocused,
                         onHoverChange: (hover) => setState(() => _passwordHover = hover),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -232,6 +287,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                       // Confirm Password Field with 3D effect
                       _build3DInputField(
                         controller: _confirmPasswordController,
+                        focusNode: _confirmPasswordFocusNode,
                         hintText: 'Confirm Password',
                         backgroundColor: color1,
                         sideColor: color1,
@@ -239,6 +295,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                         icon: Icons.lock_outline,
                         obscureText: _obscureConfirmPassword,
                         isHovered: _confirmPasswordHover,
+                        isFocused: _confirmPasswordFocused,
                         onHoverChange: (hover) => setState(() => _confirmPasswordHover = hover),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -308,6 +365,7 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
 
   Widget _build3DInputField({
     required TextEditingController controller,
+    required FocusNode focusNode,
     required String hintText,
     required Color backgroundColor,
     required Color sideColor,
@@ -318,15 +376,21 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
     Widget? suffixIcon,
     String? Function(String?)? validator,
     required bool isHovered,
+    required bool isFocused,
     required Function(bool) onHoverChange,
   }) {
+    // Calculate drawer animation values
+    final double drawerOffset = isFocused ? -30.0 : (isHovered ? -20.0 : 0.0);
+    final double fieldWidth = isFocused ? 280.0 : 250.0;
+    
     return MouseRegion(
       onEnter: (_) => onHoverChange(true),
       onExit: (_) => onHoverChange(false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+        duration: Duration(milliseconds: isFocused ? 400 : 300),
+        curve: isFocused ? Curves.easeOutCubic : Curves.easeInOut,
         transform: Matrix4.identity()
-          ..translate(isHovered ? -20.0 : 0.0, 0.0, 0.0),
+          ..translate(drawerOffset, 0.0, 0.0),
         child: Stack(
           children: [
             // Left side panel (3D effect)
@@ -358,8 +422,10 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
                   ..setEntry(3, 2, 0.001)
                   ..rotateX(0.785),
                 alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: 250,
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: isFocused ? 400 : 300),
+                  curve: isFocused ? Curves.easeOutCubic : Curves.easeInOut,
+                  width: fieldWidth,
                   height: 40,
                   decoration: BoxDecoration(
                     color: topColor.withOpacity(0.8),
@@ -370,16 +436,26 @@ class _SignUpScreenState extends State<SignUpScreen> with SingleTickerProviderSt
             ),
             
             // Main input field
-            Container(
+            AnimatedContainer(
+              duration: Duration(milliseconds: isFocused ? 400 : 300),
+              curve: isFocused ? Curves.easeOutCubic : Curves.easeInOut,
               margin: const EdgeInsets.only(left: 40),
-              width: 250,
+              width: fieldWidth,
               height: 50,
               decoration: BoxDecoration(
                 color: backgroundColor,
                 border: Border.all(color: sideColor, width: 0.5),
+                boxShadow: isFocused ? [
+                  BoxShadow(
+                    color: sideColor.withOpacity(0.6),
+                    blurRadius: 15,
+                    spreadRadius: 3,
+                  ),
+                ] : [],
               ),
               child: TextFormField(
                 controller: controller,
+                focusNode: focusNode,
                 obscureText: obscureText,
                 keyboardType: keyboardType,
                 style: const TextStyle(color: Colors.black),
