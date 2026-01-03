@@ -23,6 +23,8 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
   final _userService = UserService();
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -31,11 +33,32 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
   bool _emailHover = false;
   bool _passwordHover = false;
   bool _buttonHover = false;
+  
+  // Focus states for drawer animation
+  bool _emailFocused = false;
+  bool _passwordFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailFocusNode.addListener(() {
+      setState(() {
+        _emailFocused = _emailFocusNode.hasFocus;
+      });
+    });
+    _passwordFocusNode.addListener(() {
+      setState(() {
+        _passwordFocused = _passwordFocusNode.hasFocus;
+      });
+    });
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -97,20 +120,6 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFE8E8E8),
-      appBar: AppBar(
-        title: const Text(
-          'Login',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: color4,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
@@ -119,7 +128,110 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 40),
+                const SizedBox(height: 60),
+                // Modern Login Header with Gradient and Glow
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, child) {
+                    return Transform.translate(
+                      offset: Offset(0, 50 * (1 - value.clamp(0.0, 1.0))),
+                      child: Opacity(
+                        opacity: value.clamp(0.0, 1.0),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      // Glowing container behind text
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: color4.withOpacity(0.3),
+                              blurRadius: 30,
+                              spreadRadius: 5,
+                            ),
+                            BoxShadow(
+                              color: color3.withOpacity(0.2),
+                              blurRadius: 50,
+                              spreadRadius: 10,
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          children: [
+                            // Stroke/outline effect
+                            Text(
+                              'Welcome Back',
+                              style: TextStyle(
+                                fontSize: 42,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2,
+                                height: 1.2,
+                                foreground: Paint()
+                                  ..style = PaintingStyle.stroke
+                                  ..strokeWidth = 3
+                                  ..color = color4.withOpacity(0.5),
+                              ),
+                            ),
+                            // Main text with gradient-like shadow
+                            Text(
+                              'Welcome Back',
+                              style: TextStyle(
+                                fontSize: 42,
+                                fontWeight: FontWeight.w900,
+                                color: color4,
+                                letterSpacing: 2,
+                                height: 1.2,
+                                shadows: [
+                                  Shadow(
+                                    color: color3.withOpacity(0.8),
+                                    offset: const Offset(2, 2),
+                                    blurRadius: 4,
+                                  ),
+                                  Shadow(
+                                    color: color2.withOpacity(0.6),
+                                    offset: const Offset(4, 4),
+                                    blurRadius: 8,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Decorative line with gradient
+                      Container(
+                        width: 100,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(2),
+                          gradient: LinearGradient(
+                            colors: [
+                              color4,
+                              color3,
+                              color2,
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: color4.withOpacity(0.5),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 50),
                 // 3D Skewed Form Container
                 Transform(
                   transform: Matrix4.identity()
@@ -131,6 +243,7 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
                       // Email Field with 3D effect
                       _build3DInputField(
                         controller: _emailController,
+                        focusNode: _emailFocusNode,
                         hintText: 'E-mail',
                         backgroundColor: color3,
                         sideColor: color3,
@@ -138,6 +251,7 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
                         icon: Icons.email,
                         keyboardType: TextInputType.emailAddress,
                         isHovered: _emailHover,
+                        isFocused: _emailFocused,
                         onHoverChange: (hover) => setState(() => _emailHover = hover),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -154,6 +268,7 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
                       // Password Field with 3D effect
                       _build3DInputField(
                         controller: _passwordController,
+                        focusNode: _passwordFocusNode,
                         hintText: 'Password',
                         backgroundColor: color2,
                         sideColor: color2,
@@ -161,6 +276,7 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
                         icon: Icons.lock,
                         obscureText: _obscurePassword,
                         isHovered: _passwordHover,
+                        isFocused: _passwordFocused,
                         onHoverChange: (hover) => setState(() => _passwordHover = hover),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -235,6 +351,7 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
 
   Widget _build3DInputField({
     required TextEditingController controller,
+    required FocusNode focusNode,
     required String hintText,
     required Color backgroundColor,
     required Color sideColor,
@@ -245,15 +362,21 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
     Widget? suffixIcon,
     String? Function(String?)? validator,
     required bool isHovered,
+    required bool isFocused,
     required Function(bool) onHoverChange,
   }) {
+    // Calculate drawer animation values
+    final double drawerOffset = isFocused ? -30.0 : (isHovered ? -20.0 : 0.0);
+    final double fieldWidth = isFocused ? 280.0 : 250.0;
+    
     return MouseRegion(
       onEnter: (_) => onHoverChange(true),
       onExit: (_) => onHoverChange(false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+        duration: Duration(milliseconds: isFocused ? 400 : 300),
+        curve: isFocused ? Curves.easeOutCubic : Curves.easeInOut,
         transform: Matrix4.identity()
-          ..translate(isHovered ? -20.0 : 0.0, 0.0, 0.0),
+          ..translate(drawerOffset, 0.0, 0.0),
         child: Stack(
           children: [
             // Left side panel (3D effect)
@@ -285,8 +408,10 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
                   ..setEntry(3, 2, 0.001)
                   ..rotateX(0.785),
                 alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: 250,
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: isFocused ? 400 : 300),
+                  curve: isFocused ? Curves.easeOutCubic : Curves.easeInOut,
+                  width: fieldWidth,
                   height: 40,
                   decoration: BoxDecoration(
                     color: topColor.withOpacity(0.8),
@@ -297,16 +422,26 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
             ),
             
             // Main input field
-            Container(
+            AnimatedContainer(
+              duration: Duration(milliseconds: isFocused ? 400 : 300),
+              curve: isFocused ? Curves.easeOutCubic : Curves.easeInOut,
               margin: const EdgeInsets.only(left: 40),
-              width: 250,
+              width: fieldWidth,
               height: 50,
               decoration: BoxDecoration(
                 color: backgroundColor,
                 border: Border.all(color: sideColor, width: 0.5),
+                boxShadow: isFocused ? [
+                  BoxShadow(
+                    color: sideColor.withOpacity(0.6),
+                    blurRadius: 15,
+                    spreadRadius: 3,
+                  ),
+                ] : [],
               ),
               child: TextFormField(
                 controller: controller,
+                focusNode: focusNode,
                 obscureText: obscureText,
                 keyboardType: keyboardType,
                 style: const TextStyle(color: Colors.black),
