@@ -145,65 +145,47 @@ class LoginScreenState extends State<LoginScreen> with SingleTickerProviderState
                   },
                   child: Column(
                     children: [
-                      // Glowing container behind text
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: color4.withOpacity(0.3),
-                              blurRadius: 30,
-                              spreadRadius: 5,
+                      // Welcome Back text without background
+                      Stack(
+                        children: [
+                          // Stroke/outline effect
+                          Text(
+                            'Welcome Back',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
+                              height: 1.2,
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = 2.5
+                                ..color = color4.withOpacity(0.5),
                             ),
-                            BoxShadow(
-                              color: color3.withOpacity(0.2),
-                              blurRadius: 50,
-                              spreadRadius: 10,
+                          ),
+                          // Main text with gradient-like shadow
+                          Text(
+                            'Welcome Back',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              color: color4,
+                              letterSpacing: 1.5,
+                              height: 1.2,
+                              shadows: [
+                                Shadow(
+                                  color: color3.withOpacity(0.8),
+                                  offset: const Offset(2, 2),
+                                  blurRadius: 4,
+                                ),
+                                Shadow(
+                                  color: color2.withOpacity(0.6),
+                                  offset: const Offset(4, 4),
+                                  blurRadius: 8,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            // Stroke/outline effect
-                            Text(
-                              'Welcome Back',
-                              style: TextStyle(
-                                fontSize: 42,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2,
-                                height: 1.2,
-                                foreground: Paint()
-                                  ..style = PaintingStyle.stroke
-                                  ..strokeWidth = 3
-                                  ..color = color4.withOpacity(0.5),
-                              ),
-                            ),
-                            // Main text with gradient-like shadow
-                            Text(
-                              'Welcome Back',
-                              style: TextStyle(
-                                fontSize: 42,
-                                fontWeight: FontWeight.w900,
-                                color: color4,
-                                letterSpacing: 2,
-                                height: 1.2,
-                                shadows: [
-                                  Shadow(
-                                    color: color3.withOpacity(0.8),
-                                    offset: const Offset(2, 2),
-                                    blurRadius: 4,
-                                  ),
-                                  Shadow(
-                                    color: color2.withOpacity(0.6),
-                                    offset: const Offset(4, 4),
-                                    blurRadius: 8,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 12),
                       // Decorative line with gradient
