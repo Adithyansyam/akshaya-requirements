@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int _currentIndex = 0;
   final user = FirebaseAuth.instance.currentUser;
   final _centreService = CentreService();
+  final _uploadService = UploadService();
   
   // Location tracking variables
   LatLng? _currentLocation;
@@ -35,8 +36,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    // Check for expiring document validity on app open
-    UploadService().checkValidityExpiry();
+
+    // Check document validity reminders each time user enters the home screen.
+    _uploadService.checkValidityExpiry();
+
     // Show location permission dialog when app opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showLocationPermissionDialog();
